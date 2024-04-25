@@ -7,7 +7,8 @@ namespace LVRCalculatorApp.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) 
         {
-
+            Users = Set<User>();
+            UserTokens = Set<UserToken>();
         }
 
         public DbSet<User> Users { get; set; }
