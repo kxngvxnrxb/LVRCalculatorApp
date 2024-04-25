@@ -4,6 +4,6 @@ namespace LVRCalculatorApp.Services
 {
     public interface IPropertyService
     {
-        ServiceResponse<string> GetLVR(double loan, double value);
+        double GetLVR(double loan, double value);
     }
 }

@@ -1,34 +1,31 @@
 ﻿using LVRCalculatorApp.Models;
 using LVRCalculatorApp.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LVRCalculatorApp.Controllers
+namespace LVRCalculatorApp.Controllers;
+
+[Authorize]
+[Route("api/[controller]")]
+[ApiController]
+public class PropertyController : ControllerBase
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PropertyController : ControllerBase
+    private readonly IPropertyService _propertyService;
+
+    public PropertyController(IPropertyService propertyService)
     {
-        private readonly IPropertyService _propertyService;
+        _propertyService = propertyService;
+    }
 
-        public PropertyController(IPropertyService propertyService)
-        {
-            _propertyService = propertyService;
-        }
+    [HttpPost]
+    public ActionResult<ServiceResponse<string>> ComputeLVR(Property property)
+    {
+        if (property.PropertyValue == 0)
+            return BadRequest("Property value should not be 0.");
 
-        [HttpPost]
-        public ActionResult<ServiceResponse<string>> ComputeLVR(Property property)
-        {
-            var response = _propertyService.GetLVR(property.LoanAmount, property.PropertyValue);
-
-            if (!response.Success)
-            {
-                return BadRequest(response);
-            }
-
-            return Ok(response);
-        }
+        var response = _propertyService.GetLVR(property.LoanAmount, property.PropertyValue);
+        ServiceResponse<string> serviceResponse = new();
+        serviceResponse.Data = response.ToString("0.##") + "%";
+        return serviceResponse;
     }
 }
